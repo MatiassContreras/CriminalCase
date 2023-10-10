@@ -6,7 +6,6 @@ const MainScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Pantalla Main</Text>
-      <Button title="Ir a Home" onPress={() => navigation.navigate('Tabs', { screen: 'Home' })} />
       <Button
         title="Ir a Login"
         onPress={() => navigation.navigate('Login')}
