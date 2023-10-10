@@ -1,4 +1,3 @@
-// App.js
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -9,6 +8,8 @@ import HomeScreen from './src/components/Home';
 import ProfileScreen from './src/components/Profile';
 import LoginScreen from './src/components/Login';
 import RegisterScreen from './src/components/Register';
+import { useAuth } from './src/context/authContext';
+import AuthProvider from './src/context/authContext';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -39,12 +40,33 @@ const MainTabNavigator = () => {
 
 export default function App() {
   return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return null; // or a loading indicator if needed
+  }
+
+  return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Main" component={MainScreen} />
-        <Stack.Screen name="Tabs" component={MainTabNavigator} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
+        {!user ? (
+          <>
+            <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Tabs" component={MainTabNavigator} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
