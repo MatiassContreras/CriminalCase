@@ -10,6 +10,7 @@ import LoginScreen from './src/components/Login';
 import RegisterScreen from './src/components/Register';
 import { useAuth } from './src/context/authContext';
 import AuthProvider from './src/context/authContext';
+import Reportes from './src/components/Reportar';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -17,7 +18,7 @@ const Tab = createBottomTabNavigator();
 const MainTabNavigator = () => {
   return (
     <Tab.Navigator
-      initialRouteName="Main"
+      initialRouteName="Home"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -26,12 +27,15 @@ const MainTabNavigator = () => {
             iconName = focused ? 'home' : 'home';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'user' : 'user';
+          } else if (route.name === 'Reportar') {
+            iconName = focused ? 'exclamation-triangle' : 'exclamation-triangle';
           }
 
           return <FontAwesome5 name={iconName} size={size} color={color} />;
         },
       })}
     >
+      <Tab.Screen name="Reportar" component={Reportes} />
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
@@ -54,6 +58,7 @@ function AppContent() {
   }
 
   return (
+    /*Esto es para los componentes que estan por fuera de login*/
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!user ? (

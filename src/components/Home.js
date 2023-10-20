@@ -11,7 +11,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>¡Bienvenido a la pantalla de inicio!</Text>
-      <Button title="Iniciar sesión" onPress={() => navigation.navigate('Profile')} />
+      <Button title="Profile" onPress={() => navigation.navigate('Profile')} />
       <Button title="Logout" onPress={(handleLogout)} />
     </View>
   );

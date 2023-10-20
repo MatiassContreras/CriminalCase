@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAuth } from '../context/authContext';
 import { useNavigation } from '@react-navigation/native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -13,14 +13,14 @@ export default function LoginScreen() {
   const navigation = useNavigation();
   const [error, setError] = useState();
 
-  const handleChange = ({ name, value }) => {
+  const handleChange = (name, value ) => {
     setUser({ ...user, [name]: value });
   };
 
   const handleSubmit = async () => {
-    setError('');
+    setError(null);
     try {
-      await login(user.email,user.password);
+      await login(user.email, user.password);
       navigation.navigate('Home');
     } catch (error) {
       setError(error.message);
@@ -52,7 +52,8 @@ export default function LoginScreen() {
             name="email"
             required
         placeholder="Correo electronico"
-        onChangeText={value => handleChange('email', value)}
+        onChangeText={(value) => handleChange('email', value)}
+
       />
 
       <TextInput
@@ -63,16 +64,16 @@ export default function LoginScreen() {
         id="password"
         name="password"
         secureTextEntry={true}
-        onChangeText={value => handleChange('password', value)}
+        onChangeText={(value) => handleChange('password', value)}
       />
-      <Pressable
+      <TouchableOpacity
         style={{ height: 48, borderWidth: 2, borderColor: 'white', borderRadius: 6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingLeft: 24, paddingRight: 24, marginTop:20 }}
         onPress={handleSubmit}
       >
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Login</Text>
         </View>
-      </Pressable>
+      </TouchableOpacity>
       <TouchableOpacity
                 onPress={handleGoogleSign}
                 style={{ marginLeft: 10, marginTop:20,  height: 48, borderWidth: 2, borderColor: 'white', paddingLeft: 24, paddingRight: 24, borderRadius: 6, flexDirection: 'row', justifyContent: 'center' }}
