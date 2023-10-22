@@ -5,6 +5,11 @@ import { FontAwesome5 } from '@expo/vector-icons';
 
 const ProfileScreen = ({ navigation }) => {
   const { user, logout, loading } = useAuth();
+
+  const handleLogout = async()=> {
+      await logout();
+  }   
+  
   if (!user) {
     // El usuario no está autenticado, puedes redirigirlo a la pantalla de inicio de sesión u otra acción
     // En este ejemplo, simplemente mostramos un mensaje
@@ -19,7 +24,7 @@ const ProfileScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.profileBox}>
-      <TouchableOpacity style={styles.settingsButton} onPress={() => navigation.navigate('Tabs', { screen: 'Home' })}>
+      <TouchableOpacity style={styles.settingsButton} onPress={(handleLogout)}>
         <Text>
       <FontAwesome5 name="cog" size={20} color="#555" /> {/* Icono de configuración */}
       </Text>
@@ -35,7 +40,7 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={styles.userInfo}>{user.email}</Text>
           </View>
         </View>
-        <Button title="Ir a Home" onPress={() => navigation.navigate('Tabs', { screen: 'Home' })} />
+        <Button title="Ir a Home" onPress={(handleLogout)} />
       </View>
     </View>
   );
