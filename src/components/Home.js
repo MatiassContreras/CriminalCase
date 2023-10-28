@@ -214,21 +214,23 @@ export default function HomeScreen() {
               paddingLeft: 10,
             }}
           />
-          <Picker
-            onValueChange={(value) => handleChange('tipo', value)}
-            style={{
-              width: '80%',
-              height: 40,
-              borderColor: 'gray',
-              borderWidth: 1,
-              marginBottom: 10,
-              paddingLeft: 10,
-            }}
-          >
-            <Picker.Item label="Accidente automovilístico" value="Accidente automovilístico" />
-            <Picker.Item label="Robo" value="Robo" />
-            <Picker.Item label="Pelea" value="Pelea" />
-          </Picker>
+         <Picker
+  selectedValue={report.tipo}
+  onValueChange={(value) => handleChange('tipo', value)}
+  style={{
+    width: '80%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingLeft: 10,
+  }}
+>
+  <Picker.Item label="Accidente automovilístico" value="Accidente automovilístico" />
+  <Picker.Item label="Robo" value="Robo" />
+  <Picker.Item label="Pelea" value="Pelea" />
+</Picker>
+
           <TextInput
             placeholder="Dirección de la calle y altura"
             value={streetAddress}
