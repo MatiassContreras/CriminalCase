@@ -1,6 +1,6 @@
 // AuthProvider.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from '@firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider, signInWithRedirect } from '@firebase/auth';
 import { auth } from "../firebase-config";
 
 
@@ -22,7 +22,7 @@ export default function AuthProvider({ children }) {
 
   const loginWithGoogle = () => {
     const googleProvider = new GoogleAuthProvider();
-    return signInWithPopup(auth, googleProvider); // Implement auth methods
+    return signInWithRedirect(auth, googleProvider); // Implement auth methods
   };
 
   const loginWithFacebook = () => {

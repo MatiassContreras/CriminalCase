@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Button, TouchableHighlight,ScrollView,StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Button, TouchableHighlight, ScrollView, StyleSheet } from 'react-native';
 import { useAuth } from '../context/authContext';
 import { useNavigation } from '@react-navigation/native';
 
@@ -17,7 +17,6 @@ export default function Register() {
   const handleChange = (name, value) => {
     setUser({ ...user, [name]: value });
   };
-
 
   const handleSubmit = async () => {
     setError(null);
@@ -50,16 +49,15 @@ export default function Register() {
       setError(error.message);
     }
   };
+
   const handleCloseError = () => {
     setError(null);
   };
-
 
   const handleGoogleSign = async () => {
     await loginWithGoogle();
     navigation.navigate('Home');
   };
-
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -69,19 +67,19 @@ export default function Register() {
       >
         <Text style={styles.backButtonIcon}>←</Text>
       </TouchableOpacity>
-      
+
       <View style={styles.content}>
         <Text style={styles.title}>Registrarse</Text>
         <TextInput
           placeholder="Correo electrónico"
-          placeholderTextColor="white"
+          placeholderTextColor="black"
           onChangeText={(value) => handleChange('email', value)}
           value={user.email}
           style={styles.input}
         />
         <TextInput
           placeholder="Contraseña"
-          placeholderTextColor="white"
+          placeholderTextColor="black"
           secureTextEntry
           onChangeText={(value) => handleChange('password', value)}
           value={user.password}
@@ -121,7 +119,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black',
+    backgroundColor: 'ivory', // Cambiar el fondo del contenedor a color marfil
   },
   backButton: {
     position: 'absolute',
@@ -130,7 +128,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backButtonIcon: {
-    color: 'white',
+    color: 'black',
     fontSize: 40,
     fontWeight: 'bold',
   },
@@ -138,7 +136,7 @@ const styles = StyleSheet.create({
     maxWidth: 500,
     width: '100%',
     padding: 20,
-    backgroundColor: 'black',
+    backgroundColor: 'ivory', // Cambiar el fondo de la caja a color marfil
     borderRadius: 15,
     alignItems: 'center',
   },
@@ -146,7 +144,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: 'white',
+    color: 'black',
   },
   input: {
     padding: 10,
@@ -191,12 +189,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   loginLink: {
-    color: 'white',
+    color: 'black',
     textDecorationLine: 'underline',
     marginTop: 10,
   },
   socialLink: {
-    color: 'white',
+    color: 'black',
     textDecorationLine: 'underline',
     marginTop: 10,
   },
