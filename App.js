@@ -31,7 +31,7 @@ const MainTabNavigator = () => {
             iconName = focused ? 'exclamation-triangle' : 'exclamation-triangle';
           }
 
-          return <FontAwesome5 name={iconName} size={size} color={color} />;
+          return <FontAwesome5 name={iconName} size={size} color={'lightblue'} />;
         },
       })}
     >
