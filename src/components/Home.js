@@ -3,6 +3,7 @@ import { View, TextInput, Button, Text, TouchableOpacity } from 'react-native';
 import MapView, { Circle, Marker, Callout } from 'react-native-maps';
 import { getFirestore, collection, addDoc, onSnapshot } from 'firebase/firestore';
 import Geocoder from 'react-native-geocoding';
+import { useAuth } from '../context/authContext';
 import { GOOGLE_MAPS_KEY } from '@env';
 import { Picker } from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
@@ -13,6 +14,9 @@ export default function HomeScreen() {
   const [coordinates, setCoordinates] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [reports, setReports] = useState([]);
+  const { user } = useAuth()
+  const [selectedReportId, setSelectedReportId] = useState('');
+
   const [report, setReport] = useState({
     hora: '',
     tipo: '',
@@ -24,30 +28,36 @@ export default function HomeScreen() {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [circleData, setCircleData] = useState(null);
   const [markerData, setMarkerData] = useState(null);
-
+  const [userReports, setUserReports] = useState([]);
   Geocoder.init(GOOGLE_MAPS_KEY);
+  const userId = user && user.uid ? user.uid : null;
 
   useEffect(() => {
-    if (!mapLoaded) return;
+    if (!mapLoaded || !userId ) return;
 
     const reportesRef = collection(db, 'reportes');
 
     const unsubscribe = onSnapshot(reportesRef, (snapshot) => {
       const reportArray = [];
+      const userReportArray = [];
       snapshot.forEach((doc) => {
         const data = doc.data();
 
         if (data.coordinates && data.coordinates.latitude && data.coordinates.longitude) {
-          reportArray.push(data);
+          reportArray.push({ id: doc.id, ...data });
+        }
+        if (userId && userId === data.createdBy) {
+          userReportArray.push(doc.id);
         }
       });
+      setUserReports(userReportArray);
       setReports(reportArray);
     });
 
     return () => {
       unsubscribe();
     };
-  }, [mapLoaded]);
+  }, [mapLoaded, userId]);
 
   const handleChange = (name, value) => {
     setReport({ ...report, [name]: value });
@@ -117,6 +127,7 @@ export default function HomeScreen() {
       coordinates: coordinates,
       fillColor,
       strokeColor,
+      createdBy: user.uid,
     };
 
     try {
@@ -190,6 +201,9 @@ export default function HomeScreen() {
                       <Text>Tipo: {report.tipo}</Text>
                       <Text>Hora: {report.hora}</Text>
                       <Text>Descripción: {report.descripcion}</Text>
+                      {user && user.uid === report.createdBy && (
+                         <Text style={{fontSize:10,marginTop:5}} >ID del reporte: {report.id}</Text>
+                       )}
                     </View>
                   </Callout>
                 </Marker>
