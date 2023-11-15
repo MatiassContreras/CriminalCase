@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     borderRadius: 5,
-    color: 'white',
+    color: 'black',
     width: '100%',
   },
   errorBox: {
