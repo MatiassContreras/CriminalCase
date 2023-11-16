@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { useAuth } from '../context/authContext';
 import { onSnapshot, collection, deleteDoc, doc } from 'firebase/firestore';
 import { Picker } from '@react-native-picker/picker';
 import { db } from '../firebase-config';
 import { Button as RNEButton, Icon } from 'react-native-elements';
+import { updateDoc } from 'firebase/firestore';
 
 const Reportes = ({ navigation }) => {
   const { user, logout, loading } = useAuth();
@@ -12,6 +13,12 @@ const Reportes = ({ navigation }) => {
   const [userReports, setUserReports] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
   const userId = user && user.uid ? user.uid : null;
+  const [newHour, setNewHour] = useState('');
+  const [newType, setNewType] = useState('');
+  const [newMinutes, setNewMinutes] = useState('');
+  const [isPressed, setIsPressed] = useState(false);
+  const [newDescription, setNewDescription] = useState('');
+
 
   useEffect(() => {
     if (!userId) return;
@@ -49,6 +56,57 @@ const Reportes = ({ navigation }) => {
     setSelectedOption(option);
     setSelectedReportId('');
   };
+ // Función para obtener colores basados en el tipo
+const getColorsByType = (type) => {
+  const fillColor = type === 'Accidente automovilístico' || type === 'Sospechoso/a' || type === 'Acoso'
+    ? 'rgba(255, 255, 0, 0.2)'
+    : 'rgba(255, 2, 15, 0.41)';
+  const strokeColor = type === 'Accidente automovilístico' || type === 'Sospechoso/a' || type === 'Acoso'
+    ? 'rgba(255, 255, 0, 0.7)'
+    : 'rgba(255, 2, 15, 0.41)';
+
+  return { fillColor, strokeColor };
+};
+
+// ...
+
+const handleEditReport = async (reportId, newHour, newMinutes, newType, newDescription) => {
+  try {
+    // Realiza la lógica para actualizar la hora, tipo y descripción en la base de datos
+    // Utiliza el reportId para identificar el reporte específico
+
+    // Ejemplo (no olvides importar las funciones necesarias de Firebase):
+    const reportesRef = collection(db, 'reportes');
+    const reportDoc = doc(reportesRef, reportId);
+
+    // Combina los valores de hora y minutos
+    const combinedTime = newHour && newMinutes ? `${newHour}:${newMinutes}` : '';
+
+    // Obtén los colores basados en el nuevo tipo
+    const { fillColor, strokeColor } = getColorsByType(newType);
+
+    // Actualiza todos los campos en la base de datos, incluyendo los colores
+    await updateDoc(reportDoc, {
+      hora: combinedTime,
+      tipo: newType,
+      descripcion: newDescription,
+      fillColor,
+      strokeColor,
+    });
+
+    // Limpiar los campos de entrada después de la actualización
+    setNewHour('');
+    setNewMinutes('');
+    setNewType('');
+    setNewDescription('');
+
+    console.log('Reporte modificado:', reportId);
+  } catch (error) {
+    console.error('Error al modificar el reporte: ', error);
+  }
+};
+
+  
 
   if (!user) {
     return (
@@ -62,10 +120,10 @@ const Reportes = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Pantalla de Reportes</Text>
       {selectedOption === null && (
         <>
           <View style={{ marginTop: 20 }}>
+          <Text style={styles.heading}>Reportes</Text>
         <RNEButton
           title="Estadísticas"
           type="outline"
@@ -114,6 +172,7 @@ const Reportes = ({ navigation }) => {
         height: 50,
         borderWidth: 5,
         marginBottom: 'auto',
+        marginTop:10
       }}
     >
       <Picker.Item label="Selecciona un reporte" value="" />
@@ -131,15 +190,117 @@ const Reportes = ({ navigation }) => {
     </TouchableOpacity>
   </View>
 )}
-      {selectedOption === 'editar' && (
-        <View>
-          {/* Aquí puedes mostrar la lógica para editar reportes */}
-          <Text>Editar reportes aquí...</Text>
-          <TouchableOpacity onPress={() => setSelectedOption(null)}>
-            <Text style={styles.backButton}>Volver</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+   {selectedOption === 'editar' && (
+  <View style={styles.editContainer}>
+    <Text style={styles.heading}>Editar Reporte</Text>
+    <Text >En esta seccion podras modificar un reporte, en caso de que te hallas equivocado en la creacion del mismo. </Text>
+    <Text style={{fontWeight:'bold', marginTop:10}}> Porfavor, seleccione un reporte</Text>
+    <Picker
+      selectedValue={selectedReportId}
+      onValueChange={(value) => setSelectedReportId(value)}
+      style={{
+        width: 300,
+        height: 50,
+        borderWidth: 5,
+        marginBottom: 5,
+        marginTop: 10,
+      }}
+    >
+      <Picker.Item label="Selecciona un reporte" value="" />
+      {userReports.map((report) => (
+        <Picker.Item key={report.id} label={report.id} value={report.id} />
+      ))}
+    </Picker>
+    <Text style={{ marginLeft:140 }}>
+      Horas <Text style={{ fontSize: 10, color: 'gray' }}>24hs</Text>
+    </Text>
+    <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft:'15%' }}>
+      <TextInput
+        value={newHour}
+        onChangeText={(value) => {
+          if (/^\d{0,2}$/.test(value)) {
+            setNewHour(value);
+          }
+        }}
+        style={{
+          width: '15%',
+          height: 40,
+          borderColor: 'gray',
+          borderWidth: 1,
+          marginBottom: 10,
+          paddingLeft: 15,
+          marginLeft: 70,
+        }}
+      />
+      <Text>:</Text>
+      <TextInput
+        value={newMinutes}
+        onChangeText={(value) => {
+          if (/^\d{0,2}$/.test(value)) {
+            setNewMinutes(value);
+          }
+        }}
+        style={{
+          width: '15%',
+          height: 40,
+          borderColor: 'gray',
+          borderWidth: 1,
+          marginBottom: 10,
+          paddingLeft: 10,
+          marginRight: 70,
+        }}
+      />
+    </View>
+
+    <Text style={{ marginLeft: 70 }}>Tipo</Text>
+    <Picker
+      selectedValue={newType}
+      onValueChange={(value) => setNewType(value)}
+      style={{
+        width: 200,
+        height: 60,
+        borderWidth: 1,
+        marginBottom: 10,
+        marginLeft: 100,
+      }}
+    >
+      <Picker.Item label="Elige una opción" value="" />
+      <Picker.Item label="Accidente automovilístico" value="Accidente automovilístico" />
+      <Picker.Item label="Robo" value="Robo" />
+      <Picker.Item label="Acoso" value="Acoso" />
+      <Picker.Item label="Vandalismo" value="Vandalismo" />
+      <Picker.Item label="Sospechoso/a" value="Sospechoso/a" />
+      <Picker.Item label="Pelea" value="Pelea" />
+    </Picker>
+
+    <TextInput
+      placeholder="Descripcion breve de lo ocurrido "
+      value={newDescription}
+      onChangeText={(value) => setNewDescription(value)}
+      style={{
+        width: 340,
+        height: '20%',
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 10,
+        paddingBottom: 55,
+        paddingLeft: 10,
+        paddingTop: 10,
+      }}
+    />
+
+    <TouchableOpacity onPress={() => handleEditReport(selectedReportId, newHour, newMinutes, newType, newDescription)} disabled={!selectedReportId}>
+      <Text style={[styles.editButton, { color: selectedReportId ? 'green' : 'gray', borderColor: selectedReportId ? 'green' : 'gray' }]}>
+        Modificar Reporte
+      </Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity onPress={() => setSelectedOption(null)}>
+      <Text style={styles.backButton}>Volver</Text>
+    </TouchableOpacity>
+  </View>
+)}
+
     </View>
   );
 };
@@ -150,10 +311,71 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  editContainer: {
+    backgroundColor: '#fff', // Color de fondo de la caja de edición
+    padding: 20, // Espaciado interno
+    borderRadius: 10, // Bordes redondeados
+    borderWidth: 2, // Ancho del borde
+    borderColor: '#ddd', // Color del borde
+    marginBottom: 20, // Margen inferior
+  },
   heading: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: 'bold',
-    paddingBottom: 40,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  picker: {
+    width: 300,
+    height: 50,
+    borderWidth: 5,
+    marginBottom: 'auto',
+    marginTop: 10,
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  timeLabel: {
+    marginLeft: 70,
+    fontSize: 16,
+  },
+  timeInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeInput: {
+    width: '30%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingLeft: 15,
+    marginRight: 10,
+  },
+  label: {
+    marginLeft: 70,
+    fontSize: 16,
+  },
+  descriptionInput: {
+    width: 400,
+    height: '20%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingBottom: 55,
+    paddingLeft: 10,
+    paddingTop: 10,
+  },
+  editButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    backgroundColor: 'transparent',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   userInfo: {
     fontSize: 16,
@@ -169,14 +391,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     borderColor: 'red',
     fontWeight: 'bold',
-    marginBottom: 400,
+    marginBottom: 350,
+    marginTop:10
   },
   backButton: {
-    marginTop: 20,
-    color: 'blue',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
+    fontSize: 20,
+    fontWeight:'bold',
+    borderWidth:1,
+    width:100,
+    height:30,
+    textAlign:'center',
+    margin:'auto'
   },
 });
 
