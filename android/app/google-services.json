@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "642989456458",
+    "project_id": "criminalcase-77a62",
+    "storage_bucket": "criminalcase-77a62.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:642989456458:android:65671428481ae54d94bab3",
+        "android_client_info": {
+          "package_name": "com.matiasscontreras.CriminalCaseExpo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "642989456458-c1gvrkipcnu9e0hvqi89jqgujd8i8j13.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.matiasscontreras.CriminalCaseExpo",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "642989456458-euci06on344m8tvag067anfc3j201mb2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.matiasscontreras.CriminalCaseExpo",
+            "certificate_hash": "1151ea4d20ae36512f03d7135cc7f48cc8cf299f"
+          }
+        },
+        {
+          "client_id": "642989456458-9r88hmivlb5k1oa6unfjmo0qq1sk7mii.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVXeMVIYteiZKVZzTt5FlSWRuXamod2rY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "642989456458-7uji4b64m5tkmnccuhupnl5kvlik5qic.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
