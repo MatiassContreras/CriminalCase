@@ -8,8 +8,7 @@ import { GOOGLE_MAPS_KEY } from '@env';
 import { Picker } from '@react-native-picker/picker';
 import Modal from 'react-native-modal';
 import { db } from '../firebase-config';
-
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
   const [streetAddress, setStreetAddress] = useState('');
   const [coordinates, setCoordinates] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);

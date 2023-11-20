@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MainScreen from './src/components/Main';
 import HomeScreen from './src/components/Home';
@@ -11,8 +10,14 @@ import RegisterScreen from './src/components/Register';
 import { useAuth } from './src/context/authContext';
 import AuthProvider from './src/context/authContext';
 import Reportes from './src/components/Reportar';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
+import { useEffect } from 'react';
+import { CommonActions } from '@react-navigation/native';
 
-const Stack = createStackNavigator();
+
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
@@ -45,13 +50,18 @@ const MainTabNavigator = () => {
 export default function App() {
   return (
     <AuthProvider>
+       <NavigationContainer>
       <AppContent />
+         </NavigationContainer>
     </AuthProvider>
   );
 }
 
+
 function AppContent() {
-  const { user, loading } = useAuth();
+  const { user, loading,  getUserData  } = useAuth();
+  const navigation = useNavigation(); // Mover el uso de useNavigation aquí
+
 
   if (loading) {
     return null; // or a loading indicator if needed
@@ -59,20 +69,27 @@ function AppContent() {
 
   return (
     /*Esto es para los componentes que estan por fuera de login*/
-    <NavigationContainer>
+   
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!user ? (
           <>
             <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Tab" component={MainTabNavigator} />
+
           </>
         ) : (
           <>
-            <Stack.Screen name="Tabs" component={MainTabNavigator} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Main" component={MainScreen} />
+          <Stack.Screen name="Tab" component={MainTabNavigator} />
           </>
+
         )}
       </Stack.Navigator>
-    </NavigationContainer>
+   
   );
 }

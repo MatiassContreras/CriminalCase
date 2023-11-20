@@ -1,16 +1,78 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Button } from 'react-native';
 import { useAuth } from '../context/authContext';
 import { useNavigation } from '@react-navigation/native';
-
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CommonActions } from '@react-navigation/native';
 export default function LoginScreen() {
+  const { login, loginWithGoogle, getUserData } = useAuth();
+  const navigation = useNavigation();
+GoogleSignin.configure({
+  webClientId:"642989456458-9r88hmivlb5k1oa6unfjmo0qq1sk7mii.apps.googleusercontent.com"
+});
+
+const onGoogleButtonPress = async () =>{
+
+    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog:true});
+    const {idToken} = await GoogleSignin.signIn();
+    const googleCredential= auth.GoogleAuthProvider.credential(idToken);
+    //return auth().signInWithCredential(googleCredential);
+    const user_sign_in = auth().signInWithCredential(googleCredential);
+    user_sign_in.then((user2) => {
+      
+  if (user2){
+    console.log("USUARIO LOGEADO");
+    AsyncStorage.setItem(
+      "UserLoggedInData",
+      JSON.stringify({user2, loggedIn: true})
+      );
+
+      const fetchData = async () => {
+      const Data = await getUserData();
+      console.log(Data.user2.user);
+      console.log('Entra aqui')
+      if (Data.user2){
+         console.log('ExiteUserdddd')
+          navigation.navigate('Tab');
+        }
+      };
+    
+     fetchData();
+    
+    
+  }else {
+    console.log("No hay usuario")
+
+  }
+  
+    }).catch((error)=> {
+      console.log(error);
+    });
+  }
+
   const [user, setUser] = useState({
     email: '',
     password: '',
   });
-  const { login, loginWithGoogle } = useAuth();
-  const navigation = useNavigation();
+ 
+
+ 
+
   const [errors, setErrors] = useState({ email: null, password: null });
+  const [initializing, setInitializing] = useState(true);
+  const [user2, setUser2] = useState();
+
+  function onAuthStateChanged(user2){
+    setUser2(user2);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(()=> {
+    const suscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return suscriber;
+  },[])
 
   const handleChange = (name, value) => {
     setUser({ ...user, [name]: value });
@@ -39,16 +101,12 @@ export default function LoginScreen() {
 
     try {
       await login(user.email, user.password);
-      navigation.navigate('Home');
+      navigation.navigate('Tab');
     } catch (error) {
       setErrors({ ...errors, email: 'No se pudo iniciar sesión. Verifique sus credenciales.' });
     }
   };
 
-  const handleGoogleSign = async () => {
-    await loginWithGoogle();
-    navigation.navigate('Home');
-  };
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'ivory' }}>
@@ -122,8 +180,12 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         {/* Usar la imagen descargada del logo de Google en lugar del SVG */}
-        <TouchableOpacity
-          onPress={handleGoogleSign}
+        <Button
+        title='Iniciar Sesion con Google'
+          onPress={()=> onGoogleButtonPress().then(()=>
+              console.log("Signed in With Google")
+            )
+          }
           style={styles.googleButton}
         >
           <Image
@@ -131,7 +193,7 @@ export default function LoginScreen() {
             style={styles.googleButtonImage}
           />
           <Text style={styles.googleButtonText}>Continuar con Google</Text>
-        </TouchableOpacity>
+        </Button>
 
       </View>
     </View>

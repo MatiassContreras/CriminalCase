@@ -2,6 +2,9 @@
   "expo": {
     "name": "CriminalCaseExpo",
     "slug": "CriminalCaseExpo",
+    "plugins": [
+      "@react-native-google-signin/google-signin"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,10 +25,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.matiasscontreras.CriminalCaseExpo"
+      "package": "com.matiasscontreras.CriminalCaseExpo",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f45e834e-3a7c-4fbb-afb1-03674919ce4a"
+      }
     }
   }
 }

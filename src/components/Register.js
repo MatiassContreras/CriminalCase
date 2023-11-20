@@ -3,14 +3,13 @@ import { View, Text, TextInput, TouchableOpacity, Button, TouchableHighlight, Sc
 import { useAuth } from '../context/authContext';
 import { useNavigation } from '@react-navigation/native';
 
-export default function Register() {
+export default function Register( { navigation } ) {
   const [user, setUser] = useState({
     email: '',
     password: ''
   });
 
   const { signup, loginWithGoogle } = useAuth();
-  const navigation = useNavigation();
   const [error, setError] = useState();
   const [buttonFocused, setButtonFocused] = useState(false);
 
@@ -44,7 +43,7 @@ export default function Register() {
 
     try {
       await signup(user.email, user.password);
-      navigation.navigate('Home');
+      navigation.navigate('Tab');
     } catch (error) {
       setError(error.message);
     }

@@ -4,13 +4,14 @@ import { useAuth } from "../context/authContext";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { sendEmailVerification, updateProfile } from '@firebase/auth';
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({navigation}) => {
   const { user, logout, loading } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
   const [newDisplayName, setNewDisplayName] = useState(user?.displayName || '');
 
   const handleLogout = async () => {
     await logout();
+    navigation.navigate('Main');
   }
 
   const handleConfigurations = () => {
